@@ -213,7 +213,12 @@
 
         const summaryBox = document.getElementById('summary');
         summaryBox.style.display = "block";
-        summaryBox.innerHTML = `🎓 បេក្ខជន៖ ${name} | ថ្នាក់៖ ${sClass} <br> 📊 លទ្ធផលទទួលបាន៖ ${score} / ${shuffledQuestions.length} សំណួរ (ចំណាត់ថ្នាក់៖ ${Math.round((score/shuffledQuestions.length)*100)}%)`;
+        summaryBox.innerHTML = `🎓 បេក្ខជន៖ ${name} | ថ្នាក់៖ ${sClass} <br> 📊 លទ្ធផលទទួលបាន៖ ${score} / ${shuffledQuestions.length} សំណួរ (ចំណាត់ថ្នាក់៖ ${Math.round((score/shuffledQuestions.length)*100)}%)
+        <div class="action-links">
+                <a href="https://rosmakara71-hub.github.io/sil/" target="_blank" class="btn-link btn-home">🌐 ត្រឡប់ទៅទំព័រដើម</a>
+                <a href="https://rosmakara71-hub.github.io/sil/14" target="_blank" class="btn-link btn-next">➡️ ធ្វើកម្រងសំណួរបន្ទាប់</a>
+            </div>
+        `;
         
         if (window.MathJax) {
             MathJax.typesetPromise();
