@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <title>វិញ្ញាសាប្រឡងតេស្តសមត្ថភាព៖ សីលធម៌ និងពុទ្ធសាសនា (សីល៥)</title>
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+    <style>
+        :root { --primary: #273746; --accent: #7d6608; --success: #27ae60; }
+        body { font-family: 'Khmer OS Battambang', sans-serif; background: #f4f7f6; padding: 20px; color: #333; line-height: 1.7; }
+        .quiz-container { max-width: 850px; margin: auto; background: #fff; padding: 35px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
+        h1 { text-align: center; color: var(--primary); margin-bottom: 30px; border-bottom: 3px solid var(--accent); padding-bottom: 15px; }
+        .student-info { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; background: #fcf3cf; padding: 20px; border-radius: 8px; border-left: 5px solid var(--accent); }
+        .student-info div { display: flex; flex-direction: column; }
+        .student-info label { font-weight: bold; margin-bottom: 5px; color: var(--primary); }
+        input[type="text"] { padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; }
+        .question-box { margin-bottom: 30px; padding: 20px; border: 1px solid #e1e8ed; background: #fff; border-radius: 8px; }
+        .question-title { font-weight: bold; color: var(--primary); margin-bottom: 15px; font-size: 1.05em; }
+        .options { display: flex; flex-direction: column; gap: 10px; margin-left: 10px; }
+        .options label { cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 5px; border-radius: 4px; }
+        .options label:hover { background: #fcf3cf; }
+        .btn-submit { width: 100%; padding: 15px; background: var(--success); color: white; border: none; font-size: 1.2em; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-submit:hover { background: #219150; }
+        .feedback { margin-top: 15px; padding: 15px; display: none; border-radius: 6px; font-size: 0.95em; }
+        .correct { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .incorrect { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        #summary { text-align: center; margin-top: 30px; font-weight: bold; font-size: 1.4em; color: var(--primary); padding: 20px; background: #e8f8f5; border-radius: 8px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h1>📝 វិញ្ញាសាតេស្ត៖ សីលរបស់គ្រហស្ថ<br>បង្កើតដោយgemini</h1>
+
+    <div class="student-info">
+        <div>
+            <label for="sName">ឈ្មោះសិស្ស៖</label>
+            <input type="text" id="sName" placeholder="តើអ្នកឈ្មោះអ្វី?">
+        </div>
+        <div>
+            <label for="sClass">ថ្នាក់រៀន៖</label>
+            <input type="text" id="sClass" placeholder="រៀននៅថ្នាក់ណា">
+        </div>
+    </div>
+
+    <form id="quizForm"></form>
+    
+    <button type="button" class="btn-submit" onclick="evaluateQuiz()">បញ្ជូនវិញ្ញាសា និងពិនិត្យលទ្ធផល</button>
+    <div id="summary"></div>
+</div>
+
+<script>
+    // សំណួរអំពី៖ សីលរបស់គ្រហស្ថ
+    const questions =[
+  {
+    "q": "តើការបង្កើតវីដេអូ ឬរូបភាពកាត់ត (Deepfake) ដើម្បីបង្ខូចកេរ្តិ៍ឈ្មោះ និងសេចក្តីថ្លៃថ្នូររបស់អ្នកដទៃ ធ្លាក់ទៅក្នុងការបំពានសិក្ខាបទណាខ្លះ?",
+    "opt": ["សិក្ខាបទទី១ និងទី២", "សិក្ខាបទទី៣ និងទី៤", "សិក្ខាបទទី៤ តែមួយមុខប៉ុណ្ណោះ", "មិនខុសសីលទេ ព្រោះគ្រាន់តែជាការកាត់តលេង"],
+    "ans": "សិក្ខាបទទី៣ និងទី៤",
+    "exp": "ការធ្វើបែបនេះ គឺបំពានសិក្ខាបទទី៤ ត្រង់ការភូតភរបោកប្រាស់ បំភ័ន្តការពិត (មុសាវាទា) និងប៉ះពាល់ដល់សិក្ខាបទទី៣ ព្រោះជាការរំលោភបំពានសិទ្ធិ កិត្តិយស និងសេចក្តីថ្លៃថ្នូរខាងផ្លូវភេទ ឬកេរ្តិ៍ខ្មាស់របស់អ្នកដទៃ។"
+  },
+  {
+    "q": "ការលួចប្រើប្រាស់គណនី Wi-Fi ឬសេវាអ៊ីនធឺណិតរបស់អ្នកដទៃដោយលួចលាក់ និងគ្មានការអនុញ្ញាត តើចាត់ចូលក្នុងលក្ខណៈនៃសិក្ខាបទណា?",
+    "opt": ["បាណាតិបាតា", "អទិន្នាទានា", "កាមេសុមិច្ឆាចារា", "មុសាវាទា"],
+    "ans": "អទិន្នាទានា",
+    "exp": "ទោះបីជាសេវាអ៊ីនធឺណិតមិនមែនជាវត្ថុមានរូបរាងដូចលុយកាក់ ប៉ុន្តែវាជាសេវាកម្មដែលមានតម្លៃជាទឹកប្រាក់ និងមានម្ចាស់កម្មសិទ្ធិស្របច្បាប់។ ការលួចប្រើដោយស្ងាត់ៗ គឺខុសនឹងគោលការណ៍វៀរចាកការកាន់យកទ្រព្យដែលគេមិនបានឱ្យ (អទិន្នាទាន)។"
+  },
+  {
+    "q": "តើគុណធម៌គូកន (ធម៌គាំទ្រ) នៃសិក្ខាបទទី៤ «មុសាវាទា វេរមណី» គឺអ្វី?",
+    "opt": ["មេត្តាករុណា", "សច្ចៈ (ភាពស្មោះត្រង់ និងនិយាយពាក្យពិត)", "សទារសន្តោស", "សតិសម្បជញ្ញៈ"],
+    "ans": "សច្ចៈ (ភាពស្មោះត្រង់ និងនិយាយពាក្យពិត)",
+    "exp": "ដើម្បីរក្សាសីលទី៤ ឱ្យបានល្អ បុគ្គលនោះត្រូវមាន «សច្ចៈ» គឺភាពទៀងត្រង់ ស្មោះស្ម័គ្រ និងហ៊ាននិយាយតែពាក្យពិតប្រកបដោយការទទួលខុសត្រូវ។"
+  },
+  {
+    "q": "ការបើកបរយានយន្តក្នុងស្ថានភាពស្រវឹង (មានជាតិអាកុលលើសកម្រិតកំណត់) តើចាត់ទុកជា «សេចក្តីប្រមាទ» ក្នុងសីលទី៥ ដែរឬទេ?",
+    "opt": ["មិនមែនទេ បើបើកបរមិនទាន់មានគ្រោះថ្នាក់", "មែន ព្រោះជាការដាក់ខ្លួនឯងនិងអ្នកដទៃឱ្យស្ថិតក្នុងហានិភ័យ ដោយសារការថយចុះនៃសតិសម្បជញ្ញៈ", "មិនមែនទេ ព្រោះច្បាប់ចរាចរណ៍ខុសពីច្បាប់សាសនា", "មែន លុះត្រាតែមានប៉ូលីសចាប់ផាកពិន័យ"],
+    "ans": "មែន ព្រោះជាការដាក់ខ្លួនឯងនិងអ្នកដទៃឱ្យស្ថិតក្នុងហានិភ័យ ដោយសារការថយចុះនៃសតិសម្បជញ្ញៈ",
+    "exp": "ស្មារតីនៃសីលទី៥ គឺការវៀរចាក «មជ្ជប្បមាទដ្ឋានា» (ហេតុនៃសេចក្តីប្រមាទ)។ ការបើកបរទាំងស្រវឹង គឺជាទម្រង់ជាក់ស្តែងនៃសេចក្តីប្រមាទដ៏ធ្ងន់ធ្ងរ ដែលអាចបំផ្លាញជីវិតមនុស្សបានគ្រប់ពេល។"
+  },
+  {
+    "q": "តើការរក្សាសីល៥ ជួយការពារយើងពី «អនត្ថៈ» (សេចក្តីវិនាស ឬការខាតបង់) ក្នុងជីវិតបច្ចុប្បន្នដោយរបៀបណា?",
+    "opt": ["ជួយឱ្យចៀសផុតពីទោសទណ្ឌច្បាប់រដ្ឋ, មិនត្រូវគេសងសឹក និងមិនខូចខាតទ្រព្យសម្បត្តិដោយអបាយមុខ", "ជួយឱ្យយើងក្លាយជាមនុស្សមិនបាច់ធ្វើការក៏មានលុយ", "ធ្វើឱ្យសត្រូវទាំងអស់រត់ចេញពីប្រទេសជាតិ", "ធ្វើឱ្យយើងមិនចេះចាស់ មិនចេះឈឺ"],
+    "ans": "ជួយឱ្យចៀសផុតពីទោសទណ្ឌច្បាប់រដ្ឋ, មិនត្រូវគេសងសឹក និងមិនខូចខាតទ្រព្យសម្បត្តិដោយអបាយមុខ",
+    "exp": "អ្នកមានសីល៥ មិនប្រព្រឹត្តខុសច្បាប់ មិនបង្កើតជម្លោះដែលនាំឱ្យគេមកសងសឹក ឬបំផ្លាញទ្រព្យ និងមិនអស់លុយទៅលើគ្រឿងញៀនគ្រឿងស្រវឹង ដូចនេះជីវិតតែងមានលំនឹងល្អ។"
+  },
+  {
+    "q": "ក្នុងករណីដែលសិស្សានុសិស្ស «លួចមើលកិច្ចការ ឬលួចចម្លងវិញ្ញាសាគ្នាក្នុងម៉ោងប្រឡង» តើទង្វើនេះខុសនឹងគោលការណ៍សីលទីប៉ុន្មាន?",
+    "opt": ["សិក្ខាបទទី១", "សិក្ខាបទទី២ និងទី៤", "សិក្ខាបទទី៣", "មិនខុសសីលទេ ព្រោះជាការជួយមិត្តភក្តិ"],
+    "ans": "សិក្ខាបទទី២ និងទី៤",
+    "exp": "ការលួចចម្លងគឺបំពានសីលទី២ (អទិន្នាទាន-ការលួចកម្មសិទ្ធិបញ្ញា ឬចម្លើយដែលមិនមែនជារបស់ខ្លួន) និងបំពានសីលទី៤ (មុសាវាទ-ការបោកប្រាស់ លាក់បាំង និងមិនស្មោះត្រង់ចំពោះវិធានការប្រឡង)។"
+  },
+  {
+    "q": "តើពាក្យ «សម្ផប្បលាបៈ» ដែលជាវាចាទុច្ចរិតមួយប្រភេទក្នុងសីលទី៤ មានន័យសំដៅលើអ្វី?",
+    "opt": ["ការនិយាយកុហកបោកប្រាស់យកប្រាក់គេ", "ការនិយាយញុះញង់ឱ្យបែកបាក់សាមគ្គី", "ការនិយាយរឿងរ៉ាវអត់ប្រយោជន៍ រោយរាយ គ្មានខ្លឹមសារខ្លឹមសារ", "ការជេរប្រមាថមើលងាយអ្នកដទៃ"],
+    "ans": "ការនិយាយរឿងរ៉ាវអត់ប្រយោជន៍ រោយរាយ គ្មានខ្លឹមសារខ្លឹមសារ",
+    "exp": "«សម្ផប្បលាបៈ» គឺសម្តីរោយរាយ គ្មានប្រយោជន៍ ប៉ះពាល់ដល់ពេលវេលាការងាររបស់អ្នកដទៃ ដែលសីលទី៤ ណែនាំឱ្យយុវជន និងគ្រហស្ថគួរវៀរចាក ដើម្បីយកពេលទៅធ្វើការងារមានតម្លៃ។"
+  },
+  {
+    "q": "តើការជួញដូរខុសច្បាប់នូវ «គ្រឿងញៀន ឬសារធាតុគីមីផ្សំបង្កគ្រោះថ្នាក់» ត្រូវនឹងការហាមឃាត់ក្នុងមុខរបរជំនួញខុសឆ្គង (មិច្ឆាពាណិជ្ជា) មួយណា?",
+    "opt": ["មជ្ឈពាណិជ្ជា (ការជួញដូរគ្រឿងស្រវឹងនិងសារធាតុញៀន)", "សត្ថពាណិជ្ជា (ការជួញដូរអាវុធ)", "មំសពាណិជ្ជា (ការជួញដូរសាច់រស់)", "វិសពាណិជ្ជា (ការជួញដូរថ្នាំពិស)"],
+    "ans": "មជ្ឈពាណិជ្ជា (ការជួញដូរគ្រឿងស្រវឹងនិងសារធាតុញៀន)",
+    "exp": "ក្នុងព្រះពុទ្ធសាសនា ការជួញដូរគ្រឿងស្រវឹង គ្រឿងញៀន សារធាតុបំផ្លាញស្មារតី ហៅថា «មជ្ឈពាណិជ្ជា» ដែលជាជំនួញខុសឆ្គង (មិច្ឆាពាណិជ្ជា) ព្រោះវាបំផ្លាញសីលធម៌ និងសន្តិសុខសង្គមទាំងស្រុង។"
+  },
+  {
+    "q": "ហេតុអ្វីបានជាគេចាត់ទុកសីល៥ ថាជា «អាភិសេកសីល» ឬសីលដែលធ្វើឱ្យបុគ្គលម្នាក់ៗមានភាពខ្ពង់ខ្ពស់?",
+    "opt": ["ព្រោះអ្នករក្សាសីល៥ នឹងទទួលបានការតែងតាំងបុណ្យស័ក្តិភ្លាមៗ", "ព្រោះវាជួយដុសខាត់កាយវាចាចិត្តឱ្យស្អាតស្អំ មានតម្លៃថ្លៃថ្នូរ និងគួរឱ្យគោរពកោតក្រែង", "ព្រោះធ្វើឱ្យយើងមានអាយុវែងជាងគេក្នុងភូមិ", "ព្រោះអ្នកមានសីលមានសិទ្ធិដើរហើរមិនបាច់ពាក់មួកសុវត្ថិភាព"],
+    "ans": "ព្រោះវាជួយដុសខាត់កាយវាចាចិត្តឱ្យស្អាតស្អំ មានតម្លៃថ្លៃថ្នូរ និងគួរឱ្យគោរពកោតក្រែង",
+    "exp": "ភាពខ្ពង់ខ្ពស់របស់មនុស្សមិនមែនស្ថិតលើទ្រព្យសម្បត្តិ ឬអំណាចខាងក្រៅឡើយ ប៉ុន្តែស្ថិតនៅលើកម្រិតសីលធម៌ និងការមិនបៀតបៀនអ្នកដទៃ ដែលជាស្មារតីនៃសីល៥។"
+  },
+  {
+    "q": "តើការរក្សាសីលធម៌គ្រហស្ថ (សីល៥) មានឥទ្ធិពលវិជ្ជមានបែបណាខ្លះ ចំពោះការកសាង «សហគមន៍មានសុវត្ថិភាព»?",
+    "opt": ["ធ្វើឱ្យសហគមន៍លែងមានមនុស្សរស់នៅ", "កាត់បន្ថយអំពើចោរកម្ម អំពើហិង្សា ជម្លោះគ្រួសារ និងការប្រើប្រាស់គ្រឿងញៀន", "ធ្វើឱ្យសហគមន៍ទទួលបានថវិកាឧបត្ថម្ភពីបរទេសជានិច្ច", "មិនមានឥទ្ធិពលអ្វីទាល់តែសោះ"],
+    "ans": "កាត់បន្ថយអំពើចោរកម្ម អំពើហិង្សា ជម្លោះគ្រួសារ និងការប្រើប្រាស់គ្រឿងញៀន",
+    "exp": "កាលណាសមាជិកក្នុងសហគមន៍យល់ដឹង និងអនុវត្តសីល៥ នោះបញ្ហាសង្គមដូចជា ចោរលួច ចោរប្លន់ ការវាយតប់គ្នា និងការសេពគ្រឿងញៀននឹងត្រូវបានកាត់បន្ថយដោយស្វ័យប្រវត្តិ បង្កើតបានជាបរិយាកាសរស់នៅប្រកបដោយសន្តិសុខ។"
+  }
+];
+
+    // មុខងារសម្រាប់ Shuffle Array (Algorithm: Fisher-Yates)
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // ១. ធ្វើការ Shuffle លំដាប់លំហាត់
+    const shuffledQuestions = shuffle([...questions]);
+
+    const form = document.getElementById('quizForm');
+    shuffledQuestions.forEach((item, i) => {
+        // ២. ធ្វើការ Shuffle លំដាប់ជម្រើសចម្លើយនៅក្នុងសំណួរនីមួយៗ
+        let shuffledOptions = shuffle([...item.opt]);
+
+        let optHtml = shuffledOptions.map(o => `
+            <label>
+                <input type="radio" name="q${i}" value="${o}"> ${o}
+            </label>
+        `).join('');
+        
+        form.innerHTML += `
+            <div class="question-box">
+                <div class="question-title">សំណួរទី ${i+1}: ${item.q}</div>
+                <div class="options">${optHtml}</div>
+                <div id="r${i}" class="feedback"></div>
+            </div>
+        `;
+    });
+
+    // មុខងារកែពិន្ទុ និងបង្ហាញដំណោះស្រាយ
+    function evaluateQuiz() {
+        const name = document.getElementById('sName').value.trim();
+        const sClass = document.getElementById('sClass').value.trim();
+
+        if (!name || !sClass) {
+            alert("សូមបំពេញឈ្មោះ និងថ្នាក់រៀនរបស់សិស្សជាមុនសិន!");
+            return;
+        }
+
+        let score = 0;
+        shuffledQuestions.forEach((item, i) => {
+            const selected = document.querySelector(`input[name="q${i}"]:checked`);
+            const resBox = document.getElementById(`r${i}`);
+            resBox.style.display = "block";
+
+            if (selected && selected.value === item.ans) {
+                score++;
+                resBox.className = "feedback correct";
+                resBox.innerHTML = "✅ <b>ត្រឹមត្រូវ!</b> ដំណោះស្រាយ៖ " + item.exp;
+            } else {
+                resBox.className = "feedback incorrect";
+                resBox.innerHTML = "❌ <b>មិនត្រឹមត្រូវទេ!</b> ចម្លើយដែលត្រូវគឺ៖ " + item.ans + "<br>💡 <b>ការពន្យល់៖</b> " + item.exp;
+            }
+        });
+
+        const summaryBox = document.getElementById('summary');
+        summaryBox.style.display = "block";
+        summaryBox.innerHTML = `🎓 បេក្ខជន៖ ${name} | ថ្នាក់៖ ${sClass} <br> 📊 លទ្ធផលទទួលបាន៖ ${score} / ${shuffledQuestions.length} សំណួរ (ចំណាត់ថ្នាក់៖ ${Math.round((score/shuffledQuestions.length)*100)}%)`;
+        
+        if (window.MathJax) {
+            MathJax.typesetPromise();
+        }
+        
+        summaryBox.scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+</body>
+</html>

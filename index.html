@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ប្រព័ន្ធផ្ទុកមេរៀន និងលំហាត់គណិតវិទ្យា</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:ital,wght@0,100..700;1,100..700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --secondary-color: #3b82f6;
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+        }
+
+        body {
+            font-family: 'Kantumruy Pro', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        header p {
+            margin: 10px 0 0 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        main {
+            flex: 1;
+            max-width: 800px;
+            width: 100%;
+            margin: 30px auto;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .lesson-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .lesson-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+            border-color: var(--secondary-color);
+        }
+
+        .icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .class-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin: 0;
+        }
+
+        .btn-view {
+            margin-top: 12px;
+            font-size: 12px;
+            background-color: #eff6ff;
+            color: var(--secondary-color);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .lesson-card:hover .btn-view {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 13px;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+            background: white;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>📚 មជ្ឈមណ្ឌលផ្ទុកឯកសារគណិតវិទ្យា</h1>
+        <p>សូមជ្រើសរើសថ្នាក់រៀនខាងក្រោម ដើម្បីចូលទៅកាន់មេរៀន និងលំហាត់លម្អិត</p>
+    </header>
+
+    <main>
+        <div class="grid-container">
+            <a href="6.html" class="lesson-card">
+                <div class="icon">🎯</div>
+                <h2 class="class-title">ថ្នាក់ទី ៦</h2>
+                <div class="btn-view">ចូលមើល</div>
+            </a>
+
+            <a href="7.html" class="lesson-card">
+                <div class="icon">📐</div>
+                <h2 class="class-title">ថ្នាក់ទី ៧</h2>
+                <div class="btn-view">ចូលមើល</div>
+            </a>
+
+            <a href="8.html" class="lesson-card">
+                <div class="icon">📊</div>
+                <h2 class="class-title">ថ្នាក់ទី ៨</h2>
+                <div class="btn-view">ចូលមើល</div>
+            </a>
+
+            <a href="9.html" class="lesson-card">
+                <div class="icon">🔍</div>
+                <h2 class="class-title">ថ្នាក់ទី ៩</h2>
+                <div class="btn-view">ចូលមើល</div>
+            </a>
+
+            <a href="10.html" class="lesson-card">
+                <div class="icon">✏️</div>
+                <h2 class="class-title">ថ្នាក់ទី ១០</h2>
+                <div class="btn-view">ចូលមើល</div>
+            </a>
+
+            <a href="11.html" class="lesson-card">
+                <div class="icon">🧮</div>
+                <h2 class="class-title">ថ្នាក់ទី ១១</h2>
+                <div class="btn-view">ចូលមើល</div>
+            </a>
+
+            <a href="12.html" class="lesson-card">
+                <div class="icon">🎓</div>
+                <h2 class="class-title">ថ្នាក់ទី ១២</h2>
+                <div class="btn-view">ចូលមើល</div>
+            </a>
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2026 រៀបរៀងដោយ លោកគ្រូ រស់ មករា។ រក្សាសិទ្ធិគ្រប់យ៉ាង។
+    </footer>
+
+</body>
+</html>

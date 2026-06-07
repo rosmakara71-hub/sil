@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <title>វិញ្ញាសាប្រឡងតេស្តសមត្ថភាព៖ សីលធម៌ និងពុទ្ធសាសនា (សីល៥)</title>
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    
+    <style>
+        :root { --primary: #273746; --accent: #7d6608; --success: #27ae60; }
+        body { font-family: 'Khmer OS Battambang', sans-serif; background: #f4f7f6; padding: 20px; color: #333; line-height: 1.7; }
+        .quiz-container { max-width: 850px; margin: auto; background: #fff; padding: 35px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.08); }
+        h1 { text-align: center; color: var(--primary); margin-bottom: 30px; border-bottom: 3px solid var(--accent); padding-bottom: 15px; }
+        .student-info { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; background: #fcf3cf; padding: 20px; border-radius: 8px; border-left: 5px solid var(--accent); }
+        .student-info div { display: flex; flex-direction: column; }
+        .student-info label { font-weight: bold; margin-bottom: 5px; color: var(--primary); }
+        input[type="text"] { padding: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 1em; }
+        .question-box { margin-bottom: 30px; padding: 20px; border: 1px solid #e1e8ed; background: #fff; border-radius: 8px; }
+        .question-title { font-weight: bold; color: var(--primary); margin-bottom: 15px; font-size: 1.05em; }
+        .options { display: flex; flex-direction: column; gap: 10px; margin-left: 10px; }
+        .options label { cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 5px; border-radius: 4px; }
+        .options label:hover { background: #fcf3cf; }
+        .btn-submit { width: 100%; padding: 15px; background: var(--success); color: white; border: none; font-size: 1.2em; border-radius: 6px; cursor: pointer; font-weight: bold; }
+        .btn-submit:hover { background: #219150; }
+        .feedback { margin-top: 15px; padding: 15px; display: none; border-radius: 6px; font-size: 0.95em; }
+        .correct { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .incorrect { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        #summary { text-align: center; margin-top: 30px; font-weight: bold; font-size: 1.4em; color: var(--primary); padding: 20px; background: #e8f8f5; border-radius: 8px; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h1>📝 វិញ្ញាសាតេស្ត៖ ចេតសិក<br>បង្កើតដោយgemini</h1>
+
+    <div class="student-info">
+        <div>
+            <label for="sName">ឈ្មោះសិស្ស៖</label>
+            <input type="text" id="sName" placeholder="តើអ្នកឈ្មោះអ្វី?">
+        </div>
+        <div>
+            <label for="sClass">ថ្នាក់រៀន៖</label>
+            <input type="text" id="sClass" placeholder="រៀននៅថ្នាក់ណា">
+        </div>
+    </div>
+
+    <form id="quizForm"></form>
+    
+    <button type="button" class="btn-submit" onclick="evaluateQuiz()">បញ្ជូនវិញ្ញាសា និងពិនិត្យលទ្ធផល</button>
+    <div id="summary"></div>
+</div>
+
+<script>
+    // សំណួរអំពី៖ សីលរបស់គ្រហស្ថ
+    const questions =[
+  {
+    "q": "តើចេតសិកមួយណាដែលដើរតួជា «អាវុធមុខពីរ» កាលណាផ្សំជាមួយកុសលចិត្តនាំឱ្យរីកចម្រើន តែបើផ្សំជាមួយអកុសលចិត្ត នឹងជម្រុញឱ្យធ្វើបាបកាន់តែខ្លាំង?",
+    "opt": ["មោហៈ", "វីរិយៈ", "ឆន្ទៈ", "ចេតនា"],
+    "ans": "វីរិយៈ",
+    "exp": "«វីរិយចេតសិក» (សេចក្តីព្យាយាម) ជាអញ្ញសមានចេតសិក។ បើប្រកបក្នុងកុសល គឺព្យាយាមធ្វើបុណ្យ តែបើប្រកបក្នុងអកុសល (មិច្ឆាវាយាមៈ) គឺព្យាយាមធ្វើបាប ដូចជាប្រឹងប្រែងរៀបល្បិចកលបោកប្រាស់គេជាដើម។"
+  },
+  {
+    "q": "សភាវៈដែល «ចង្អៀតចង្អល់ចិត្ត មិនសប្បាយចិត្តទាល់តែសោះនៅពេលឃើញអ្នកដទៃបានជោគជ័យ ឬមានទ្រព្យសម្បត្តិលើសខ្លួន» ត្រូវនឹងអកុសលចេតសិកណា?",
+    "opt": ["មច្ឆរិយៈ", "ឥស្សា", "កុក្កុច្ចៈ", "ទោសៈ"],
+    "ans": "ឥស្សា",
+    "exp": "«ឥស្សាចេតសិក» គឺសេចក្តីច្រណែន (Envy) មានលក្ខណៈមិនពេញចិត្ត ឬមិនអាចទ្រាំទ្របានចំពោះទ្រព្យសម្បត្តិ គុណធម៌ ឬភាពជោគជ័យរបស់សត្វដទៃ។"
+  },
+  {
+    "q": "សភាវៈដែល «កំណាញ់ កំណប់លាក់ទុក មិនចង់ឱ្យទ្រព្យសម្បត្តិ ឬចំណេះដឹងរបស់ខ្លួនរីករាលដាលទៅដល់អ្នកដទៃ» ត្រូវនឹងអកុសលចេតសិកណា?",
+    "opt": ["ឥស្សា", "មច្ឆរិយៈ", "មានៈ", "លោភៈ"],
+    "ans": "មច្ឆរិយៈ",
+    "exp": "«មច្ឆរិយចេតសិក» គឺសេចក្តីកំណាញ់ (Avarice/Stinginess) មានលក្ខណៈលាក់លៀម និងការពារផលប្រយោជន៍ផ្ទាល់ខ្លួនមិនឱ្យអ្នកដទៃបានចំណែកឡើយ។"
+  },
+  {
+    "q": "តើចេតសិកមួយណាដែលធ្វើមុខងារ «ក្តៅក្រហាយស្តាយក្រោយ» ចំពោះបុណ្យដែលខ្លួនមិនបានធ្វើ ឬបាបដែលខ្លួនបានជ្រុលដៃធ្វើរួចហើយ?",
+    "opt": ["វិចិកិច្ឆា", "ឧទ្ធច្ចៈ", "កុក្កុច្ចៈ", "ទោសៈ"],
+    "ans": "កុក្កុច្ចៈ",
+    "exp": "«កុក្កុច្ចចេតសិក» គឺសេចក្តីរំខានចិត្ត ឬក្តៅក្រហាយស្តាយក្រោយ (Regret/Remorse) វាមានលក្ខណៈដុតរំលាយចិត្តឱ្យគិតខ្វល់ខ្វាយតែពីរឿងអតីតកាលដែលខុសឆ្គង។"
+  },
+  {
+    "q": "តើចេតសិកគូណាដែលមានមុខងារ «កម្ចាត់ភាពធ្ងន់សង្កត់ និងភាពមិនរហ័សរហួននៃចិត្ត» ញាំងឱ្យការធ្វើកុសលមានភាពស្រាលស្រទន់?",
+    "opt": ["កាយលហុតា និងចិត្តលហុតា", "កាយបស្សទ្ធិ និងចិត្តបស្សទ្ធិ", "កាយមុទុតា និងចិត្តមុទុតា", "កាយកម្មញ្ញតា និងចិត្តកម្មញ្ញតា"],
+    "ans": "កាយលហុតា និងចិត្តលហុតា",
+    "exp": "«លហុតា» គឺភាពស្រាល (Lightness)។ កាយលហុតា និងចិត្តលហុតា ធ្វើឱ្យនាមធម៌មានភាពស្រាលស្រឡះ ជួយកម្ចាត់ភាពធ្ងន់ធ្លាក់ដែលបង្កឡើងដោយថីនមិទ្ធៈ (សេចក្តីងងុយស្ពឹក)។"
+  },
+  {
+    "q": "តើចេតសិកគូណាដែលធ្វើតួនាទី «កម្ចាត់ភាពរោគា ឬភាពមិនរលូននៃនាមធម៌» ប្រៀបដូចជាការមិនមានរោគក្នុងប្រព័ន្ធចិត្ត?",
+    "opt": ["កាយបាគុញ្ញតា និងចិត្តបាគុញ្ញតា", "កាយបស្សទ្ធិ និងចិត្តបស្សទ្ធិ", "កាយឧជុកតា និងចិត្តឧជុកតា", "កាយកម្មញ្ញតា និងចិត្តកម្មញ្ញតា"],
+    "ans": "កាយបាគុញ្ញតា និងចិត្តបាគុញ្ញតា",
+    "exp": "«បាគុញ្ញតា» គឺភាពស្ទាត់ជំនាញ ឬភាពមិនមានរោគ (Proficiency)។ ធម៌គូនេះជួយឱ្យចិត្ត និងចេតសិកដទៃទៀតមានសុខភាពល្អ ស្ទាត់ជំនាញក្នុងការប្រព្រឹត្តកុសលធម៌ មិនរអាក់រអួល។"
+  },
+  {
+    "q": "នៅពេលយើងនិយាយថា «លោកគ្រូមានចិត្តអត់ធ្មត់ខ្ពស់ មិនតបតនឹងពាក្យសម្តីអសុរោះ» តើតួអង្គអត់ធ្មត់ (ខន្តី) នោះ តាមពិតជាសភាវៈរបស់ចេតសិកណា?",
+    "opt": ["សតិ", "តត្រមជ្ឈត្តតា", "អទោសៈ", "បញ្ញា"],
+    "ans": "អទោសៈ",
+    "exp": "ក្នុងបរមត្ថធម៌ «ខន្តី» (សេចក្តីអត់ធ្មត់) មានសភាវៈមិនប្រទូស្ត មិនខឹង មិនគុំកួន ដូច្នេះវាមានតួដួងតែមួយជាមួយ «អទោសចេតសិក»។"
+  },
+  {
+    "q": "តើ «អនោត្តប្បចេតសិក» មានលក្ខណៈសម្តែងចេញក្នុងចិត្តយ៉ាងដូចម្តេច ដែលលោកប្រៀបប្រដូចទៅនឹង «សត្វល្អិតហោះចូលភ្នក់ភ្លើង»?",
+    "opt": ["សេចក្តីប្រាថ្នាចង់បានរបស់គេ", "ភាពមិនខ្លាចញញើតចំពោះផលនៃបាបកម្ម ហ៊ានលះបង់ជីវិតទៅធ្វើរឿងអាក្រក់", "សេចក្តីសង្ស័យមិនដាច់ស្រឡះ", "ភាពរាយមាយដាច់សតិ"],
+    "ans": "ភាពមិនខ្លាចញញើតចំពោះផលនៃបាបកម្ម ហ៊ានលះបង់ជីវិតទៅធ្វើរឿងអាក្រក់",
+    "exp": "«អនោត្តប្បៈ» គឺភាពមិនខ្លាចបាប (Fearlessness of wrongdoing)។ ដូចសត្វល្អិតឃើញភ្លើងស្មានតែស្អាតក៏ហោះចូល ឯបុគ្គលគ្មានអនោត្តប្បៈឃើញបាបស្មានតែល្អ ក៏លោតទៅប្រព្រឹត្តដោយមិនខ្លាចទណ្ឌកម្មឡើយ។"
+  },
+  {
+    "q": "តើចេតសិកមួយណាដែលធ្វើតួនាទី «កំណត់ចំណាំ និងចងចាំ» នូវពណ៌ សំឡេង ឬសញ្ញាសម្គាល់ផ្សេងៗ ដើម្បីឱ្យចិត្តដឹងថានេះជាអ្វី?",
+    "opt": ["ផស្សៈ", "វេទនា", "សញ្ញា", "មនសិការ"],
+    "ans": "សញ្ញា",
+    "exp": "«សញ្ញាចេតសិក» មានមុខងារកត់ចំណាំ (Perception) ប្រៀបដូចជាជាងឈើធ្វើស្នាមគូសចំណាំលើឈើ ដើម្បីឱ្យដឹងថាកន្លែងណាត្រូវកាត់ ឬត្រូវខួង។"
+  },
+  {
+    "q": "តើចេតសិកមួយណាដែលជា «អ្នកដឹកនាំ និងចាត់ចែង» សម្បយុត្តធម៌ទាំងឡាយឱ្យធ្វើកិច្ចការងាររៀងៗខ្លួន លំនាំដូចជាមេក្រុមកម្មករ?",
+    "opt": ["ចេតនា", "មនសិការ", "ឆន្ទៈ", "ឯកគ្គតា"],
+    "ans": "ចេតនា",
+    "exp": "«ចេតនាចេតសិក» (Volition/Intention) មានតួនាទីជម្រុញ ដឹកនាំ និងចាត់ចែងចេតសិកដទៃទៀតឱ្យធ្វើការរួមគ្នា។ ចេតនានេះឯងដែលព្រះពុទ្ធត្រាស់ថាជា «តួកម្ម» (ចេតនាហំ ភិក្ខវេ កម្មំ វទាមិ)។"
+  },
+  {
+    "q": "ហេតុអ្វីបានជា «អមោហចេតសិក» មិនកើតនៅក្នុង «មហាកុសលចិត្តញាណវិប្បយុត្ត» (ចិត្តបុណ្យដែលមិនប្រកបដោយបញ្ញា)?",
+    "opt": ["ព្រោះអមោហៈជាអកុសលធម៌", "ព្រោះពាក្យថា ញាណវិប្បយុត្ត គឺដាច់ខាតមិនមានបញ្ញា (អមោហៈ) ចូលរួមផ្សំឡើយ", "ព្រោះវាបង្កឱ្យកើតសេចក្តីសង្ស័យ", "ព្រោះកើតបានតែក្នុងលោភចិត្ត"],
+    "ans": "ព្រោះពាក្យថា ញាណវិប្បយុត្ត គឺដាច់ខាតមិនមានបញ្ញា (អមោហៈ) ចូលរួមផ្សំឡើយ",
+    "exp": "«ញាណ» គឺបញ្ញា ឬអមោហៈ។ ចិត្តដែលជា «ញាណវិប្បយុត្ត» គឺចិត្តធ្វើបុណ្យដោយគ្រាន់តែធ្វើៗតាមគេ គ្មានការពិចារណាដឹងហេតុផលកម្មផលឡើយ ដូចនេះអមោហចេតសិកមិនអាចកើតរួមបានទេ។"
+  },
+  {
+    "q": "តើចេតសិកក្រុមណាដែលធ្វើមុខងារ «វៀរចាកជាដាច់ខាត និងកាត់ផ្តាច់ទុច្ចរិតផ្លូវកាយ និងផ្លូវវាចា» តែម្តងគត់នៅខណៈសម្រេចលោកុត្តរចិត្ត?",
+    "opt": ["អប្បមញ្ញាចេតសិក ២", "វិរតីចេតសិក ៣", "សព្វចិត្តសាធារណចេតសិក ៧", "បកិណ្ណកចេតសិក ៦"],
+    "ans": "វិរតីចេតសិក ៣",
+    "exp": "«វិរតីចេតសិក ៣» (សម្មាវាចា សម្មាកម្មន្តៈ សម្មាអាជីវៈ) កាលណាកើតក្នុងលោកុត្តរចិត្ត (មគ្គចិត្ត) វានឹងធ្វើការរួមគ្នាផ្ដាច់ឫសគល់នៃកាយទុច្ចរិតនិងវចីទុច្ចរិតជាដាច់ខាត មិនឱ្យកើតឡើងវិញបានឡើយ។"
+  },
+  {
+    "q": "តើការធ្វើទានដោយ «ក្តីរីករាយ ពេញចិត្តខ្លាំង និងប្រកបដោយការយល់ដឹងពីផលនៃកម្ម» មានចេតសិកសំខាន់ៗណាខ្លះចូលរួម?",
+    "opt": ["ទោសៈ, កុក្កុច្ចៈ, មោហៈ", "សោមនស្សវេទនា, បញ្ញិន្រ្ទិយ, សទ្ធា", "ឧទ្ធច្ចៈ, វិចិកិច្ឆា, ថីនៈ", "ឧបេក្ខាវេទនា, មានៈ, ទិដ្ឋិ"],
+    "ans": "សោមនស្សវេទនា, បញ្ញិន្រ្ទិយ, សទ្ធា",
+    "exp": "សេចក្តីរីករាយត្រូវនឹង «សោមនស្សវេទនា» ការយល់ដឹងត្រូវនឹង «បញ្ញិន្រ្ទិយ» ហើយការជ្រះថ្លាធ្វើទានត្រូវនឹង «សទ្ធា» ដែលសុទ្ធសឹងជាសោភណចេតសិកកំពូលៗ។"
+  },
+  {
+    "q": "តើចេតសិកមួយណាដែលធ្វើតួនាទី «តម្រង់ចិត្តឆ្ពោះទៅរកអារម្មណ៍» ប្រៀបដូចជាអ្នកកាន់ចង្កូតឡានតម្រង់ទៅរកគោលដៅ?",
+    "opt": ["ផស្សៈ", "ចេតនា", "មនសិការ", "អធិមោក្ខ"],
+    "ans": "មនសិការ",
+    "exp": "«មនសិការចេតសិក» (Attention) មានតួនាទីធ្វើអារម្មណ៍ទុកក្នុងចិត្ត ឬនាំចិត្តទៅប្រឈមមុខត្រង់ចំពោះអារម្មណ៍នោះៗ បើគ្មានមនសិការទេ ចិត្តក៏មិនអាចចាប់អារម្មណ៍ដឹងរឿងរ៉ាវបានដែរ។"
+  },
+  {
+    "q": "តើ «ឯកគ្គតាចេតសិក» កាលណាត្រូវបានអភិវឌ្ឍតាមរយៈការស្មារតីជក់ចិត្តនឹងអារម្មណ៍កម្មដ្ឋាន នឹងវិវត្តខ្លួនទៅជាអ្វី?",
+    "opt": ["វិបល្លាស (ការយល់ខុស)", "សមាធិ (ឬ ចិត្តតម្កល់មាំ)", "បស្សទ្ធិ (សេចក្តីស្ងប់)", "មេត្តាព្រហ្មវិហារ"],
+    "ans": "សមាធិ (ឬ ចិត្តតម្កល់មាំ)",
+    "exp": "«ឯកគ្គតា» គឺភាពមានអារម្មណ៍តែមួយ (One-pointedness)។ កាលណាវាមានកម្លាំងខ្លាំងក្លាឡើង វានឹងដើរតួជា «សមាធិ» ឬ «សមាធិន្រ្ទិយ» ញាំងចិត្តឱ្យស្ងប់ជ្រៅក្នុងឈានសមាបត្តិ។"
+  }
+];
+
+    // មុខងារសម្រាប់ Shuffle Array (Algorithm: Fisher-Yates)
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // ១. ធ្វើការ Shuffle លំដាប់លំហាត់
+    const shuffledQuestions = shuffle([...questions]);
+
+    const form = document.getElementById('quizForm');
+    shuffledQuestions.forEach((item, i) => {
+        // ២. ធ្វើការ Shuffle លំដាប់ជម្រើសចម្លើយនៅក្នុងសំណួរនីមួយៗ
+        let shuffledOptions = shuffle([...item.opt]);
+
+        let optHtml = shuffledOptions.map(o => `
+            <label>
+                <input type="radio" name="q${i}" value="${o}"> ${o}
+            </label>
+        `).join('');
+        
+        form.innerHTML += `
+            <div class="question-box">
+                <div class="question-title">សំណួរទី ${i+1}: ${item.q}</div>
+                <div class="options">${optHtml}</div>
+                <div id="r${i}" class="feedback"></div>
+            </div>
+        `;
+    });
+
+    // មុខងារកែពិន្ទុ និងបង្ហាញដំណោះស្រាយ
+    function evaluateQuiz() {
+        const name = document.getElementById('sName').value.trim();
+        const sClass = document.getElementById('sClass').value.trim();
+
+        if (!name || !sClass) {
+            alert("សូមបំពេញឈ្មោះ និងថ្នាក់រៀនរបស់សិស្សជាមុនសិន!");
+            return;
+        }
+
+        let score = 0;
+        shuffledQuestions.forEach((item, i) => {
+            const selected = document.querySelector(`input[name="q${i}"]:checked`);
+            const resBox = document.getElementById(`r${i}`);
+            resBox.style.display = "block";
+
+            if (selected && selected.value === item.ans) {
+                score++;
+                resBox.className = "feedback correct";
+                resBox.innerHTML = "✅ <b>ត្រឹមត្រូវ!</b> ដំណោះស្រាយ៖ " + item.exp;
+            } else {
+                resBox.className = "feedback incorrect";
+                resBox.innerHTML = "❌ <b>មិនត្រឹមត្រូវទេ!</b> ចម្លើយដែលត្រូវគឺ៖ " + item.ans + "<br>💡 <b>ការពន្យល់៖</b> " + item.exp;
+            }
+        });
+
+        const summaryBox = document.getElementById('summary');
+        summaryBox.style.display = "block";
+        summaryBox.innerHTML = `🎓 បេក្ខជន៖ ${name} | ថ្នាក់៖ ${sClass} <br> 📊 លទ្ធផលទទួលបាន៖ ${score} / ${shuffledQuestions.length} សំណួរ (ចំណាត់ថ្នាក់៖ ${Math.round((score/shuffledQuestions.length)*100)}%)`;
+        
+        if (window.MathJax) {
+            MathJax.typesetPromise();
+        }
+        
+        summaryBox.scrollIntoView({ behavior: 'smooth' });
+    }
+</script>
+</body>
+</html>
